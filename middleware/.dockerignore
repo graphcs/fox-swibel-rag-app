@@ -1,0 +1,18 @@
+# Exclude the notebooks directory from built images
+notebooks/
+
+# Exclude git history
+.git
+.gitignore
+
+# Exclude Python cache/env files
+__pycache__
+*.pyc
+.venv
+venv
+env
+
+# Exclude Docker config files
+Dockerfile
+docker-compose.yml
+.dockerignore

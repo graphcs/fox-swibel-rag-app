@@ -1,0 +1,52 @@
+services:
+  # Image #1 - Dev
+  dev: 
+    # Name the image and container
+    image: fox-swibel-dev-img:1.0
+    container_name: fox-swibel-dev-container
+
+    build: 
+      context: .
+      target: dev # from dockerfile
+    ports:
+      - "8888:8888"
+      
+    # This bind mounts current directory (.) to /app inside the container.
+    # Any changes made locally are instantly visible inside
+    volumes:
+      - .:/app
+    command: jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root --NotebookApp.token=''    
+    
+    working_dir: /app
+
+
+
+  # Image #2 - Test
+  test:
+    # Name the image and container
+    image: fox-swibel-test-img:1.0
+    container_name: fox-swibel-test-container
+
+    build:
+        context: .
+        target: test # from dockerfile
+
+    # OVERRIDE: This keeps the container running indefinitely so you can exec into it to run tests
+    command: tail -f /dev/null  
+    
+
+  # Image #3 - Prod
+  prod:
+    # Name the image and container
+    image: fox-swibel-prod-img:1.0
+    container_name: fox-swibel-prod-container
+
+    build:
+      context: .
+      target: prod # from dockerfile
+    
+    # Keeps it running indefinitely for now but may need to change based on entry point of app 
+    command: tail -f /dev/null   
+    
+
+    
