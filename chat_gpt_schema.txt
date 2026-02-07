@@ -1,0 +1,75 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "iManage GPT",
+    "description": "API middleware connecting ChatGPT to iManage document repositories.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://to_be_determined.azurewebsites.net/api"
+    }
+  ],
+
+"paths": {
+    "/process-request": {
+      "post": {
+        "description": "Submits a request to the middleware. Authentication is handled via OAuth2 header.",
+        "operationId": "ProcessMiddlewareRequest",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "matterId": {
+                    "type": "string",
+                    "description": "The unique iManage identifier for the legal matter or project."
+                  },
+                  "documentId": {
+                    "type": "string",
+                    "description": "The unique identifier for the specific document (optional)."
+                  },
+                  "clientId": {
+                    "type": "string",
+                    "description": "The client identifier associated with the matter."
+                  },
+                  "operation": {
+                    "type": "string",
+                    "enum": ["retrieve", "summarize", "analyze", "list_files"],
+                    "description": "The specific action to perform on the target data."
+                  },
+                  "userEmail": {
+                    "type": "string",
+                    "description": "The user's email address"
+                  }
+                },
+                "required": ["matterId", "operation"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "data": { "type": "string" },
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - User needs to sign in again."
+          }
+        }
+      }
+    }
+  }
+}
