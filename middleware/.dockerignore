@@ -16,3 +16,7 @@ env
 Dockerfile
 docker-compose.yml
 .dockerignore
+
+# Exclude keys for within Azure
+local.settings.json
+.env

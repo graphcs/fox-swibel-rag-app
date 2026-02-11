@@ -2,34 +2,45 @@ services:
   # Image #1 - Dev
   dev: 
     # Name the image and container
-    image: fox-swibel-dev-img:1.0
+    image: fox-swibel-dev-img:2.0
     container_name: fox-swibel-dev-container
+    platform: linux/amd64
 
     build: 
       context: .
       target: dev # from dockerfile
     ports:
-      - "8888:8888"
-      
+      - "8888:8888" # Jupyter
+      - "7071:7071" # Azure
+    
+    # Load secrets into environment variables only when container is run
+    env_file:
+      - .env
+
     # This bind mounts current directory (.) to /app inside the container.
     # Any changes made locally are instantly visible inside
     volumes:
-      - .:/app
-    command: jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root --NotebookApp.token=''    
+      - .:/home/site/wwwroot
+    # command: jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root --NotebookApp.token=''    
     
-    working_dir: /app
+    # working_dir: /app
 
 
 
   # Image #2 - Test
   test:
     # Name the image and container
-    image: fox-swibel-test-img:1.0
+    image: fox-swibel-test-img:2.0
     container_name: fox-swibel-test-container
+    platform: linux/amd64
 
     build:
         context: .
         target: test # from dockerfile
+    
+    # Load secrets into environment variables only when container is run
+    env_file:
+      - .env
 
     # OVERRIDE: This keeps the container running indefinitely so you can exec into it to run tests
     command: tail -f /dev/null  
@@ -38,12 +49,19 @@ services:
   # Image #3 - Prod
   prod:
     # Name the image and container
-    image: fox-swibel-prod-img:1.0
+    image: fox-swibel-prod-img:2.0
     container_name: fox-swibel-prod-container
+    platform: linux/amd64
 
     build:
       context: .
       target: prod # from dockerfile
+
+    # Load secrets into environment variables only when container is run
+    # TODO: If we switch to a container deploy, we'll need to remove this and read it in through Azure
+    # but leaving these in there in case we need to last ditch figure out what's going on in a stripped down container
+    env_file:
+      - .env
     
     # Keeps it running indefinitely for now but may need to change based on entry point of app 
     command: tail -f /dev/null   
