@@ -7,9 +7,15 @@ class TestSearchValidation:
 
     def create_request(self, body=None, headers={"Content-Type": "application/json", "Authorization": "Bearer valid-test-token"}):
         """Helper to build a clean Azure Request"""
+
+        if body is not None:
+            encoded_body = json.dumps(body).encode('utf-8')
+        else:
+            encoded_body = b''
+
         return func.HttpRequest(
             method='POST',
-            body=json.dumps(body).encode('utf-8') if body else b'',
+            body=encoded_body,
             url='/api/search',
             headers=headers
         )
@@ -19,15 +25,24 @@ class TestSearchValidation:
         """Fail if the request body is completely empty"""
         req = self.create_request(body=None)
         resp = search(req)
-        assert resp.status_code == 400
-        assert "Invalid JSON" in resp.get_body().decode()
+        response_body = json.loads(resp.get_body().decode())
+
+        # Note we need to PASS so GPT can get the response
+        # but explicitly include the error message
+        assert resp.status_code == 200
+        # assert "Invalid JSON" in resp.get_body().decode()
+        assert "Invalid JSON" in response_body["error"]
 
     def test_rejects_missing_query(self):
         """Fail if JSON is valid but 'query' param is missing"""
         req = self.create_request(body={"filters": {"class": "DOC"}})
         resp = search(req)
-        assert resp.status_code == 400
-        assert "Missing 'query'" in resp.get_body().decode()
+
+        # Note we need to PASS so GPT can get the response
+        # but explicitly include the error message
+        assert resp.status_code == 200
+        response_body = json.loads(resp.get_body().decode())
+        assert "Missing 'query'" in response_body["error"]
 
     # --- Filters are optional but if they're provided, make sure they're formatted correctly
 
@@ -38,8 +53,11 @@ class TestSearchValidation:
             "filters": "I am a string not a dict" # Bad Format
         })
         resp = search(req)
-        assert resp.status_code == 400
-        assert "must be a dictionary" in resp.get_body().decode()
+        # Note we need to PASS so GPT can get the response
+        # but explicitly include the error message
+        assert resp.status_code == 200
+        response_body = json.loads(resp.get_body().decode())
+        assert "must be a dictionary" in response_body["error"]
 
     def test_proper_filters_format(self):
         req = self.create_request(body={
@@ -50,7 +68,9 @@ class TestSearchValidation:
         })
         resp = search(req)
         assert resp.status_code == 200
-    
+        response_body = json.loads(resp.get_body().decode())
+        assert "results" in response_body
+        assert "error" not in response_body
 
     #  --- Auth gut checks (make sure token is there at least)
     def test_rejects_missing_auth_header(self):
@@ -64,9 +84,11 @@ class TestSearchValidation:
         )
         
         resp = search(req)
-        
-        assert resp.status_code == 401
-        assert "Missing Bearer Token" in resp.get_body().decode()
+        # Note we need to PASS so GPT can get the response
+        # but explicitly include the error message
+        assert resp.status_code == 200
+        response_body = json.loads(resp.get_body().decode())
+        assert "Missing Bearer Token" in response_body["error"]
 
     def test_accepts_fake_token_presence(self):
         """

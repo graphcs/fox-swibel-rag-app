@@ -1,75 +1,86 @@
-{
-  "openapi": "3.1.0",
-  "info": {
-    "title": "iManage GPT",
-    "description": "API middleware connecting ChatGPT to iManage document repositories.",
-    "version": "1.0.0"
-  },
-  "servers": [
-    {
-      "url": "https://to_be_determined.azurewebsites.net/api"
-    }
-  ],
+openapi: 3.1.0
+info:
+  title: iManage GPT
+  description: API middleware connecting ChatGPT to iManage document repositories.
+  version: 1.0.0
+servers:
+  - url: https://imanage-gpt.azurewebsites.net
+paths:
+  /api/process-request:
+    post:
+      description: Submits a request to the middleware. Authentication is handled via OAuth2 header.
+      operationId: ProcessMiddlewareRequest
+      x-openai-isConsequential: false # bypasses manual confirmation of every external request
+      security:
+        - oauth2: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                matterId:
+                  type: string
+                  description: The unique iManage identifier for the legal matter or project.
+                documentId:
+                  type: string
+                  description: The unique identifier for the specific document (optional).
+                clientId:
+                  type: string
+                  description: The client identifier associated with the matter.
+                operation:
+                  type: string
+                  enum:
+                    - retrieve
+                    - summarize
+                    - analyze
+                    - list_files
+                  description: The specific action to perform on the target data.
+                userEmail:
+                  type: string
+                  description: The user's email address
+              required:
+                - matterId
+                - operation
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    type: string
+        "401":
+          description: Unauthorized - User needs to sign in again.
 
-"paths": {
-    "/process-request": {
-      "post": {
-        "description": "Submits a request to the middleware. Authentication is handled via OAuth2 header.",
-        "operationId": "ProcessMiddlewareRequest",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "matterId": {
-                    "type": "string",
-                    "description": "The unique iManage identifier for the legal matter or project."
-                  },
-                  "documentId": {
-                    "type": "string",
-                    "description": "The unique identifier for the specific document (optional)."
-                  },
-                  "clientId": {
-                    "type": "string",
-                    "description": "The client identifier associated with the matter."
-                  },
-                  "operation": {
-                    "type": "string",
-                    "enum": ["retrieve", "summarize", "analyze", "list_files"],
-                    "description": "The specific action to perform on the target data."
-                  },
-                  "userEmail": {
-                    "type": "string",
-                    "description": "The user's email address"
-                  }
-                },
-                "required": ["matterId", "operation"]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": { "type": "string" },
-                    "data": { "type": "string" },
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized - User needs to sign in again."
-          }
-        }
-      }
-    }
-  }
-}
+components:
+  schemas:
+    QueryRequest:
+      type: object
+      properties:
+        prompt:
+          type: string
+          description: The user's query or command.
+        context:
+          type: string
+          description: Optional context or document ID.
+    QueryResponse:
+      type: object
+      properties:
+        response:
+          type: string
+          description: The answer from iManage.
+  
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://login.microsoftonline.com/common/oauth2/v2.0/authorize
+          tokenUrl: https://login.microsoftonline.com/common/oauth2/v2.0/token
+          scopes: {}
