@@ -2,15 +2,17 @@ openapi: 3.1.0
 info:
   title: iManage GPT
   description: API middleware connecting ChatGPT to iManage document repositories.
-  version: 1.0.0
+  version: 1.1.0
 servers:
   - url: https://imanage-gpt.azurewebsites.net
+    description: Azure Middleware Production Server
 paths:
-  /api/process-request:
+  /api/search:
     post:
-      description: Submits a request to the middleware. Authentication is handled via OAuth2 header.
-      operationId: ProcessMiddlewareRequest
-      x-openai-isConsequential: false # bypasses manual confirmation of every external request
+      operationId: searchFiles
+      summary: Search and retrieve file chunks
+      description: Sends a query to search iManage and returns metadata and text chunks.
+      x-openai-isConsequential: false
       security:
         - oauth2: []
       requestBody:
@@ -19,42 +21,40 @@ paths:
           application/json:
             schema:
               type: object
-              properties:
-                matterId:
-                  type: string
-                  description: The unique iManage identifier for the legal matter or project.
-                documentId:
-                  type: string
-                  description: The unique identifier for the specific document (optional).
-                clientId:
-                  type: string
-                  description: The client identifier associated with the matter.
-                operation:
-                  type: string
-                  enum:
-                    - retrieve
-                    - summarize
-                    - analyze
-                    - list_files
-                  description: The specific action to perform on the target data.
-                userEmail:
-                  type: string
-                  description: The user's email address
               required:
-                - matterId
-                - operation
+                - query
+              properties:
+                query:
+                  type: string
+                  description: The search term or natural language question.
+                filters:
+                  type: object
+                  description: Optional metadata filters (e.g. author, matterId, document_class).
+                  additionalProperties: true
       responses:
-        "200":
-          description: Successful operation
+        '200':
+          description: Successful response (may contain results or a soft error).
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  status:
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        metadata:
+                          type: object
+                        chunks:
+                          type: array
+                          items:
+                            type: string
+                  error:
                     type: string
-                  data:
-                    type: string
+                    description: A descriptive error message if something went wrong.                    
         "401":
           description: Unauthorized - User needs to sign in again.
 
