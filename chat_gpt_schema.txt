@@ -1,0 +1,86 @@
+openapi: 3.1.0
+info:
+  title: iManage GPT
+  description: API middleware connecting ChatGPT to iManage document repositories.
+  version: 1.1.0
+servers:
+  - url: https://imanage-gpt.azurewebsites.net
+    description: Azure Middleware Production Server
+paths:
+  /api/search:
+    post:
+      operationId: searchFiles
+      summary: Search and retrieve file chunks
+      description: Sends a query to search iManage and returns metadata and text chunks.
+      x-openai-isConsequential: false
+      security:
+        - oauth2: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - query
+              properties:
+                query:
+                  type: string
+                  description: The search term or natural language question.
+                filters:
+                  type: object
+                  description: Optional metadata filters (e.g. author, matterId, document_class).
+                  additionalProperties: true
+      responses:
+        '200':
+          description: Successful response (may contain results or a soft error).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        metadata:
+                          type: object
+                        chunks:
+                          type: array
+                          items:
+                            type: string
+                  error:
+                    type: string
+                    description: A descriptive error message if something went wrong.                    
+        "401":
+          description: Unauthorized - User needs to sign in again.
+
+components:
+  schemas:
+    QueryRequest:
+      type: object
+      properties:
+        prompt:
+          type: string
+          description: The user's query or command.
+        context:
+          type: string
+          description: Optional context or document ID.
+    QueryResponse:
+      type: object
+      properties:
+        response:
+          type: string
+          description: The answer from iManage.
+  
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://login.microsoftonline.com/common/oauth2/v2.0/authorize
+          tokenUrl: https://login.microsoftonline.com/common/oauth2/v2.0/token
+          scopes: {}
