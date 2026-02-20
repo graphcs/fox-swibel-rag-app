@@ -9,6 +9,10 @@ export interface Document {
   jurisdiction: string | null;
   caseNumber: string | null;
   dateFiled: string | null;
+  author: string | null;
+  dollarAmounts: string[] | null;
+  contractForm: string | null;
+  witnesses: string[] | null;
   pageCount: number | null;
   chunkCount: number;
   status: "processing" | "ready" | "error";
