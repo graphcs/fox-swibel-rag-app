@@ -75,7 +75,15 @@ export function DocumentList({ documents, onDelete, isLoading }: DocumentListPro
 
   return (
     <div className="overflow-hidden rounded-lg border border-zinc-200">
-      <table className="w-full text-left text-sm">
+      <table className="w-full table-fixed text-left text-sm">
+        <colgroup>
+          <col className="w-[45%] sm:w-[40%]" />
+          <col className="hidden sm:table-column w-[8%]" />
+          <col className="w-[15%] sm:w-[12%]" />
+          <col className="hidden md:table-column w-[8%]" />
+          <col className="hidden md:table-column w-[18%]" />
+          <col className="w-[10%] sm:w-[7%]" />
+        </colgroup>
         <thead>
           <tr className="border-b border-zinc-200 bg-zinc-50">
             <th className="px-4 py-3 text-xs font-semibold text-zinc-600">Document</th>
@@ -83,7 +91,7 @@ export function DocumentList({ documents, onDelete, isLoading }: DocumentListPro
             <th className="px-4 py-3 text-xs font-semibold text-zinc-600">Status</th>
             <th className="hidden px-4 py-3 text-xs font-semibold text-zinc-600 md:table-cell">Chunks</th>
             <th className="hidden px-4 py-3 text-xs font-semibold text-zinc-600 md:table-cell">Uploaded</th>
-            <th className="px-4 py-3 text-xs font-semibold text-zinc-600">
+            <th className="px-4 py-3 text-xs font-semibold text-zinc-600 text-right">
               <span className="sr-only">Actions</span>
             </th>
           </tr>
