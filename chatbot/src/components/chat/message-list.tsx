@@ -38,7 +38,7 @@ export function MessageList({ messages, isStreaming }: MessageListProps) {
               </svg>
             </div>
             <h2 className="text-lg font-semibold text-zinc-900">
-              Hi, I&apos;m Jannet
+              Hi, I&apos;m Janet
             </h2>
             <p className="mt-2 max-w-md text-sm text-zinc-500">
               Your Fox & Swibel legal research assistant. Ask me about your

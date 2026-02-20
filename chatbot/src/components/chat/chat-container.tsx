@@ -32,7 +32,7 @@ export function ChatContainer() {
           </div>
           <div>
             <h1 className="text-sm font-semibold text-zinc-900">
-              Jannet
+              Janet
             </h1>
             <p className="text-xs text-zinc-500">Fox & Swibel Legal Assistant</p>
           </div>
