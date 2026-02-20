@@ -4,7 +4,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { User, Scale } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
-import { SourceCard } from "./source-card";
+import { SourceCard, groupSourcesByDocument } from "./source-card";
 import type { Message } from "@/types/chat";
 
 interface MessageBubbleProps {
@@ -86,17 +86,20 @@ export function MessageBubble({ message, isStreaming }: MessageBubbleProps) {
           )}
         </div>
 
-        {/* Source cards */}
-        {message.sources && message.sources.length > 0 && (
-          <div className="space-y-1.5 pl-1">
-            <p className="text-xs font-medium text-zinc-500">
-              Sources ({message.sources.length})
-            </p>
-            {message.sources.map((source, idx) => (
-              <SourceCard key={source.chunkId} source={source} index={idx} />
-            ))}
-          </div>
-        )}
+        {/* Source cards (grouped by document) */}
+        {message.sources && message.sources.length > 0 && (() => {
+          const grouped = groupSourcesByDocument(message.sources);
+          return (
+            <div className="space-y-1.5 pl-1">
+              <p className="text-xs font-medium text-zinc-500">
+                Sources ({grouped.length})
+              </p>
+              {grouped.map((source, idx) => (
+                <SourceCard key={source.documentId} source={source} index={idx} />
+              ))}
+            </div>
+          );
+        })()}
       </div>
 
       {/* User avatar */}
