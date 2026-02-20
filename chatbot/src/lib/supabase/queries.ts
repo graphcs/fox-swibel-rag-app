@@ -206,7 +206,7 @@ export async function insertChunks(
 }
 
 // ============================================================
-// Vector Search
+// Vector Search (used for filter-only queries without text)
 // ============================================================
 
 export async function searchChunks(
@@ -240,19 +240,59 @@ export async function searchChunks(
 
   if (error) throw new Error(`Vector search failed: ${error.message}`);
 
-  return (data || []).map(
-    (row: Record<string, unknown>): Source => ({
-      chunkId: row.chunk_id as string,
-      documentId: row.document_id as string,
-      content: row.content as string,
-      sectionTitle: row.section_title as string | null,
-      pageNumbers: row.page_numbers as number[] | null,
-      paragraphNumbers: row.paragraph_numbers as string | null,
-      similarity: row.similarity as number,
-      filename: row.filename as string,
-      documentTitle: row.document_title as string | null,
-      documentType: row.document_type as string | null,
-      caseNumber: row.case_number as string | null,
-    })
-  );
+  return (data || []).map(mapSourceRow);
+}
+
+// ============================================================
+// Hybrid Search (vector + full-text with RRF fusion)
+// ============================================================
+
+export async function hybridSearch(
+  queryText: string,
+  queryEmbedding: number[],
+  options?: {
+    count?: number;
+    documentType?: string;
+    jurisdiction?: string;
+    dateFrom?: string;
+    dateTo?: string;
+    party?: string;
+    author?: string;
+    contractForm?: string;
+    witness?: string;
+  }
+): Promise<Source[]> {
+  const { data, error } = await supabase.rpc("hybrid_search", {
+    query_text: queryText,
+    query_embedding: queryEmbedding,
+    match_count: options?.count ?? MATCH_COUNT,
+    filter_document_type: options?.documentType ?? null,
+    filter_jurisdiction: options?.jurisdiction ?? null,
+    filter_date_from: options?.dateFrom ?? null,
+    filter_date_to: options?.dateTo ?? null,
+    filter_party: options?.party ?? null,
+    filter_author: options?.author ?? null,
+    filter_contract_form: options?.contractForm ?? null,
+    filter_witness: options?.witness ?? null,
+  });
+
+  if (error) throw new Error(`Hybrid search failed: ${error.message}`);
+
+  return (data || []).map(mapSourceRow);
+}
+
+function mapSourceRow(row: Record<string, unknown>): Source {
+  return {
+    chunkId: row.chunk_id as string,
+    documentId: row.document_id as string,
+    content: row.content as string,
+    sectionTitle: row.section_title as string | null,
+    pageNumbers: row.page_numbers as number[] | null,
+    paragraphNumbers: row.paragraph_numbers as string | null,
+    similarity: row.similarity as number,
+    filename: row.filename as string,
+    documentTitle: row.document_title as string | null,
+    documentType: row.document_type as string | null,
+    caseNumber: row.case_number as string | null,
+  };
 }

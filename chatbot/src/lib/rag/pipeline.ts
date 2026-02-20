@@ -1,6 +1,10 @@
 import { openai } from "@/lib/openai/client";
 import { embedText } from "@/lib/openai/embeddings";
-import { searchChunks, listDocumentSummaries } from "@/lib/supabase/queries";
+import {
+  searchChunks,
+  hybridSearch,
+  listDocumentSummaries,
+} from "@/lib/supabase/queries";
 import {
   TOOLS,
   type SearchDocumentsArgs,
@@ -63,36 +67,31 @@ async function executeTool(
 
       let results: Source[];
 
+      const filterOpts = {
+        documentType: a.document_type,
+        jurisdiction: a.jurisdiction,
+        dateFrom: a.date_from,
+        dateTo: a.date_to,
+        party: a.party,
+        author: a.author,
+        contractForm: a.contract_form,
+        witness: a.witness,
+        count,
+      };
+
       if (a.query && a.query.trim().length > 0) {
-        // Normal path: semantic search with optional filters
+        // Hybrid search: vector similarity + full-text keyword matching
+        // combined via Reciprocal Rank Fusion (RRF)
         const queryEmbedding = await embedText(a.query);
-        results = await searchChunks(queryEmbedding, {
-          documentType: a.document_type,
-          jurisdiction: a.jurisdiction,
-          dateFrom: a.date_from,
-          dateTo: a.date_to,
-          party: a.party,
-          author: a.author,
-          contractForm: a.contract_form,
-          witness: a.witness,
-          count,
-        });
+        results = await hybridSearch(a.query, queryEmbedding, filterOpts);
       } else {
         // Fallback: GPT sent filters only without a semantic query.
         // Use a generic embedding so vector search still works,
         // but set threshold to 0 so filters dominate.
         const fallbackEmbedding = await embedText("legal document");
         results = await searchChunks(fallbackEmbedding, {
+          ...filterOpts,
           threshold: 0.0,
-          documentType: a.document_type,
-          jurisdiction: a.jurisdiction,
-          dateFrom: a.date_from,
-          dateTo: a.date_to,
-          party: a.party,
-          author: a.author,
-          contractForm: a.contract_form,
-          witness: a.witness,
-          count,
         });
       }
 
