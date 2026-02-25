@@ -41,7 +41,7 @@ export function MessageList({ messages, isStreaming }: MessageListProps) {
               Hi, I&apos;m Janet
             </h2>
             <p className="mt-2 max-w-md text-sm text-zinc-500">
-              Your Fox & Swibel legal research assistant. Ask me about your
+              Your AI legal research assistant. Ask me about your
               uploaded legal documents — I can find relevant clauses, summarize
               motions, compare contracts, and more.
             </p>

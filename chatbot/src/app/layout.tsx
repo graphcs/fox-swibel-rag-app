@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Janet - Fox & Swibel Legal Assistant",
+  title: "Janet - General Legal AI Assistant",
   description:
     "Janet is your AI-powered legal research assistant. Ask questions about your uploaded legal documents.",
 };
