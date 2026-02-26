@@ -16,14 +16,14 @@ const EXAMPLE_CATEGORIES = [
     label: "Case Analysis",
     queries: [
       "What are the causes of action in the environmental complaint?",
-      "What charges was Kra' Saunda Lloyd convicted of, and what was the court's reasoning?",
+      "What charges was Kra' Saunda Lloyd convicted of?",
     ],
   },
   {
     label: "Legal Research",
     queries: [
       "Under Florida law, can attorney's fees be awarded for litigating the amount of fees?",
-      "What is the legal distinction between 'termination' and 'non-extension' of employment in Johnston v. Medical Pharma?",
+      "What is the legal distinction between 'termination' and 'non-extension' of employment in the Johnston v. Medical Pharma case, and why does it matter for severance pay?",
     ],
   },
   {
