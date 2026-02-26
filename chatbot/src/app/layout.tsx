@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Janet - General Legal AI Assistant",
+  title: "Legal AI Assistant",
   description:
-    "Janet is your AI-powered legal research assistant. Ask questions about your uploaded legal documents.",
+    "Your AI-powered legal research assistant. Ask questions about your uploaded legal documents.",
 };
 
 export default function RootLayout({

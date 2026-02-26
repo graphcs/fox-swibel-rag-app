@@ -32,7 +32,7 @@ export function ChatContainer() {
           </div>
           <div>
             <h1 className="text-sm font-semibold text-zinc-900">
-              Janet
+              Legal AI Assistant
             </h1>
           </div>
         </div>
@@ -58,7 +58,7 @@ export function ChatContainer() {
       </header>
 
       {/* Messages */}
-      <MessageList messages={messages} isStreaming={isStreaming} />
+      <MessageList messages={messages} isStreaming={isStreaming} onExampleClick={sendMessage} />
 
       {/* Input */}
       <ChatInput

@@ -59,7 +59,7 @@ export default function AdminPage() {
               Document Manager
             </h1>
             <p className="text-xs text-zinc-500">
-              Upload and manage legal documents for Janet
+              Upload and manage legal documents for the AI assistant
             </p>
           </div>
         </div>
