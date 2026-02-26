@@ -16,7 +16,7 @@ const EXAMPLE_CATEGORIES = [
     label: "Case Analysis",
     queries: [
       "What are the causes of action in the environmental complaint?",
-      "What charges was Kra' Saunda Lloyd convicted of?",
+      "What evidence did OmniCorp allegedly suppress regarding the Blue Heron Wetlands project?",
     ],
   },
   {
@@ -37,7 +37,7 @@ const EXAMPLE_CATEGORIES = [
     label: "Specific Details",
     queries: [
       "How much data did Northstar allegedly exfiltrate from Vertex's Azure environment?",
-      "When did Robert Johnston's employment begin and end, and what triggered the severance dispute?",
+      "What is section 61.16(1) of the Florida Statutes and how was it interpreted in the Schultheis case?",
     ],
   },
 ];
