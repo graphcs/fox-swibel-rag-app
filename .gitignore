@@ -142,6 +142,8 @@ celerybeat.pid
 *.sage.py
 
 # Environments
+.env
+.env.local
 !.env.example
 .envrc
 .venv
@@ -212,7 +214,3 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
-temp_auto_push.bat
-temp_interactive_push.bat
-config.bat
-node_modules
